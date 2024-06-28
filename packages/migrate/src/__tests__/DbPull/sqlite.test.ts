@@ -368,15 +368,14 @@ describe('common/sqlite', () => {
     expect(captureStdout.getCapturedText().join('\n')).toMatchInlineSnapshot(`""`)
   })
 
-  // TODO: requires change to `get_config` in `@prisma/prisma-schema-wasm`
-  it.skip('should fail when schema is invalid', async () => {
+  it('should fail when schema is invalid', async () => {
     ctx.fixture('introspect')
     const result = DbPull.new().parse(['--schema=./prisma/invalid.prisma'])
     await expect(result).rejects.toThrowErrorMatchingInlineSnapshot(`
       "P1012
 
       error: Error validating model "something": Each model must have at least one unique criteria that has only required fields. Either mark a single field with \`@id\`, \`@unique\` or add a multi field criterion with \`@@id([])\` or \`@@unique([])\` to the model.
-        -->  schema.prisma:11
+        -->  prisma/invalid.prisma:11
          | 
       10 | 
       11 | model something {
@@ -408,22 +407,17 @@ describe('common/sqlite', () => {
     `)
   })
 
-  // TODO: requires change to `get_config` in `@prisma/prisma-schema-wasm`
-  it.skip('should succeed when schema is invalid and using --force', async () => {
+  it('should succeed when schema is invalid and using --force', async () => {
     ctx.fixture('introspect')
 
     const result = DbPull.new().parse(['--schema=./prisma/invalid.prisma', '--force'])
     await expect(result).resolves.toMatchInlineSnapshot(`""`)
 
-    expect(captureStdout.getCapturedText().join('\n')).toMatchInlineSnapshot(`
+    expect(captureStdout.getCapturedText().join('')).toMatchInlineSnapshot(`
       "Prisma schema loaded from prisma/invalid.prisma
-
       Datasource "db": SQLite database "dev.db" at "file:dev.db"
 
-
-
       - Introspecting based on datasource defined in prisma/invalid.prisma
-
       ✔ Introspected 3 models and wrote them into prisma/invalid.prisma in XXXms
             
       Run prisma generate to generate Prisma Client.
